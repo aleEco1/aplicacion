@@ -15,7 +15,7 @@ airline_data =  pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.
 data = airline_data.sample(n=500, random_state=42)
 
 # Pie Chart Creation
-fig = px.pie(data, values='Flights', names='DistanceGroup', title='Distance group proportion by flights')
+fig = px.pie(data, values='Flights', names='DistanceGroup', title='Distancias del grupo')
 
 # Create a dash application
 app = dash.Dash(__name__)
