@@ -19,6 +19,8 @@ fig = px.pie(data, values='Flights', names='DistanceGroup', title='Distance grou
 
 # Create a dash application
 app = dash.Dash(__name__)
+server = app.server  # 👈 Necesario para Render
+
 
 # Get the layout of the application and adjust it.
 # Create an outer division using html.Div and add title to the dashboard using html.H1 component
