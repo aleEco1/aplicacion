@@ -3,7 +3,7 @@ import plotly.express as px
 import pandas as pd
 
 app = Dash(__name__)
-df = base_anual_jovenes
+df = datos
 
 app.layout = html.Div([
     html.H1('Sueldo promedio por profesionista en México', 
