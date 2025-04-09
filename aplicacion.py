@@ -1,37 +1,64 @@
-# Import required packages
-import pandas as pd
+from dash import Dash, dcc, html, Input, Output
 import plotly.express as px
-import dash
-from dash import dcc
-from dash import html
+import pandas as pd
 
-# Read the airline data into pandas dataframe
-airline_data =  pd.read_csv('https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-DV0101EN-SkillsNetwork/Data%20Files/airline_data.csv', 
-                            encoding = "ISO-8859-1",
-                            dtype={'Div1Airport': str, 'Div1TailNum': str, 
-                                   'Div2Airport': str, 'Div2TailNum': str})
+app = Dash(__name__)
+df = base_anual_jovenes
 
-# Randomly sample 500 data points. Setting the random state to be 42 so that we get same result.
-data = airline_data.sample(n=500, random_state=42)
+app.layout = html.Div([
+    html.H1('Sueldo promedio por profesionista en México', 
+            style={'textAlign': 'center', 'color': "blue", 'font-size': 30}),
+    
+    dcc.Dropdown(
+        id='dropdown',
+        options=[{'label': c, 'value': c} for c in df['Descripción_Campo_amplio'].unique()],
+        value='Artes y humanidades'
+    ),
 
-# Pie Chart Creation
-fig = px.pie(data, values='Flights', names='DistanceGroup', title='Distancias del grupo')
+    html.Label("Selecciona estado(s) a resaltar:"),
+    dcc.Checklist(
+        id='checklist-estados',
+        options=[{'label': e, 'value': e} for e in sorted(df['DESCRIP'].unique())],
+        value=[],  # por defecto ninguno seleccionado
+        inline=True
+    ),
 
-# Create a dash application
-app = dash.Dash(__name__)
-server = app.server  # 👈 Necesario para Render
+    dcc.Graph(id='graph'), 
+])
 
+@app.callback(
+    Output('graph', 'figure'),
+    Input('dropdown', 'value'),
+    Input('checklist-estados', 'value')
+)
+def update_graph(selected_campo, estados_resaltados):
+    filtered_df = df[df['Descripción_Campo_amplio'] == selected_campo]
 
-# Get the layout of the application and adjust it.
-# Create an outer division using html.Div and add title to the dashboard using html.H1 component
-# Add description about the graph using HTML P (paragraph) component
-# Finally, add graph component.
-app.layout = html.Div(children=[html.H1('Airline Dashboard', style={'textAlign': 'center', 'color': '#503D36', 'font-size': 40}),
-                                html.P('Proportion of distance group (250 mile distance interval group) by flights.', style={'textAlign':'center', 'color': '#F57241'}),
-                                dcc.Graph(figure=fig),
-                                               
-                    ])
+    fig = px.scatter(
+        filtered_df,
+        x="Año",
+        y="Sueldo promedio por profesionista",
+        color="DESCRIP",
+        size="fac_tri",
+        size_max=25,
+        height=500,
+        width=900,
+        template="simple_white",
+        labels={
+            "DESCRIP": "Estado",
+            "fac_tri": "Profesionistas"
+        }
+    )
+    fig.update_xaxes(type="category")
 
-# Run the application                   
+    # Baja opacidad general y resalta los estados seleccionados
+    fig.for_each_trace(
+        lambda trace: trace.update(marker=dict(opacity=1)) 
+        if trace.name in estados_resaltados 
+        else trace.update(marker=dict(opacity=0.3))
+    )
+
+    return fig
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
