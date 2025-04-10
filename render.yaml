@@ -1,5 +1,5 @@
 services:
-  - name: app
+  - name: my-app
     type: web
     env: node
     buildCommand: 'npm install'
