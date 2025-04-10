@@ -3,6 +3,7 @@ import plotly.express as px
 import pandas as pd
 
 app = Dash(__name__)
+server = app.server
 df = pd.read_csv("https://raw.githubusercontent.com/aleEco1/aplicacion/main/datos.csv")
 
 app.layout = html.Div([
