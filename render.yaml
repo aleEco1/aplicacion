@@ -1,1 +1,9 @@
-startCommand: gunicorn app:server
+services:
+  - type: web
+    name: my-dash-app
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:server"
+    envVars:
+      - key: PORT
+        value: "10000"
