@@ -62,4 +62,4 @@ def update_graph(selected_campo, estados_resaltados):
     return fig
 
 if __name__ == '__main__':
-    app.run(__name__)
+    app.run()
