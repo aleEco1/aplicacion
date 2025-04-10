@@ -1,9 +1,11 @@
 services:
-  - type: web
-    name: my-dash-app
-    env: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:server"
+  - name: my-app
+    type: web
+    env: node
+    buildCommand: 'npm install'
+    startCommand: 'npm start'
     envVars:
-      - key: PORT
-        value: "10000"
+      - key: MY_ENV_VAR
+        value: 'production'
+    plan: starter
+    region: oregon
